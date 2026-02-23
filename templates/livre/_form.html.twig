@@ -1,0 +1,11 @@
+<div class="conteneur">
+    {{ form_start(form) }}
+    {# {{ form_widget(form) }} #}
+    <div class="edition">{{form_row(form.titre)}}</div>
+    <div class="edition">{{form_row(form.auteur)}}</div>
+    {# <div class="edition">{{form_row(form.createdAt)}}</div> #}
+    <div class="edition">{{form_row(form.description)}}</div>
+    
+    <button class="btn">{{ button_label|default('Enregistrer') }}</button>
+    {{ form_end(form) }}
+</div>

@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}liste des livres{% endblock %}
+
+{% block body %}
+    <h1 id="livres">La liste des livres disponible</h1>
+
+    <table class="table  table-hover livres">
+        <thead>
+            <tr class="table-info">
+                <th>Titre</th>
+                <th>date de creation</th>
+                <th>Auteur</th>
+                <th>Description</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for livre in livres %}
+            <tr class="table-danger">
+               
+                <td>{{ livre.titre }}</td>
+                <td>{{ livre.createdAt ? livre.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ livre.auteur }}</td>
+                <td>{{ livre.description }}</td>
+                <td>
+                    <a href="{{ path('app_livre_show', {'id': livre.id}) }}" class="btn btn-warning">voir details</a>
+                    <a href="{{ path('app_livre_edit', {'id': livre.id}) }}" class="btn btn-secondary">modifier les informations</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">pas d'enregistrements</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_livre_new') }}" class="btn btn-lg btn-success" >Ajouter un livre</a>
+{% endblock %}
