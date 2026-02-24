@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Livre;
 use App\Form\LivreType;
 use App\Repository\LivreRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -30,6 +32,21 @@ final class LivreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // ajouter la date + heure actuelle
+            $livre->setCreatedAt(new DateTimeImmutable());
+            //ajouter la couverture
+            $imageFile = $form->get('couverture')->getData();
+            if ($imageFile) {
+
+                $newFilename = "livre" . uniqid() . "." . $imageFile->guessExtension();
+
+                try {
+                    $imageFile->move($this->getParameter('dossierImage'), $newFilename);
+                } catch (FileException $e) {
+                    $e->getMessage();
+                }
+                $livre->setCouverture($newFilename);
+            }
             $entityManager->persist($livre);
             $entityManager->flush();
 
@@ -71,7 +88,7 @@ final class LivreController extends AbstractController
     #[Route('/{id}', name: 'app_livre_delete', methods: ['POST'])]
     public function delete(Request $request, Livre $livre, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$livre->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $livre->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($livre);
             $entityManager->flush();
         }
